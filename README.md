@@ -29,15 +29,15 @@ To create new blog: POST http://localhost:3000/posts,  Use the token for authent
 
    Request Body: {"title":"", "body":""}
 
-To update any blog: PUT http://localhost:3000/posts/{post_id} 
+To update any blog: PUT http://localhost:3000/posts/{post_id} , Use Token
 
-   Request Body: {"title":""} (if user want to update title)
+   Request Body: {"title":""} (if users want to update title)
    
-   Request Body: {"body":""} (if user want to update body)
+   Request Body: {"body":""} (if users want to update body)
    
-   Request Body: {"title":"", "body":""} (if user want to update both)
+   Request Body: {"title":"", "body":""} (if users want to update both)
    
-To delete any blog: DELETE http://localhost:3000/posts/{post_id}
+To delete any blog: DELETE http://localhost:3000/posts/{post_id} , Use Token
 
 # Technology Used
 Express, MongoDB Atlas (Cloud)
