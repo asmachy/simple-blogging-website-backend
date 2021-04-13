@@ -18,12 +18,12 @@ class PostService{
             return null;
         }
     }
-    async createNewPost(reqBody, user){
+    async createNewPost(reqBody, author_name, author_email){
         const post = new Post({
             title: reqBody.title,
             body: reqBody.body,
-            author: user.fullname,
-            author_email: user.email
+            author: author_name,
+            author_email: author_email
         });
         try{
             const post1= await post.save();
@@ -39,7 +39,7 @@ class PostService{
              return true;
 
         } catch(err){
-            return err;
+            return null;
     
         }
     }
@@ -48,22 +48,8 @@ class PostService{
 
             await Post.findByIdAndDelete(id);
             return "Post Deleted";
-            
-            // if(!mongoose.Types.ObjectId.isValid(id)) return "Post Not Found...";
-            // const post= await Post.findById(id);
-            
-            // if(post===null)
-            //     return "Post Not Found";
-            // if(this.isValidUser(post, user_email)) {
-            // await Post.findByIdAndDelete(id);
-            // return "Post Deleted";
-            // }
-            // else{
-            //     return "Access Denied!";
-            // }
         } catch(err){
-            // return {"message": "Oops! Something Happend!"};
-            return err;
+            return null;
     
         }
     }
