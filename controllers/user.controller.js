@@ -13,43 +13,29 @@ module.exports = {
             }
             else{
                 const nUser = await userService.createNewUser(req.body);
-                res.json(nUser);
+                res.status(201).json(nUser);
             }
             
         } catch(err){
-            res.send("Oops! Error: "+err);
+            res.status(400).send({message: err});
         }
     },
     login: async(req, res, next) =>{
         try{
-            const user = await userService.getUserByEmail(req.body.email);
-            if(user === null){
-                res.send("User Not Found!");
+            const user = await userService.getUserByEmail(req.body.email);    
+            const f= await bcryptjs.compare(req.body.password, user.password);
+            if(f){
+                const token = jwt.sign({email: user.email},process.env.jwtSecret,{expiresIn: '1d'});
+                res.status(200).json({message: "Login Successful!",
+                          token  });
             }
-            else{
-                const f= await bcryptjs.compare(req.body.password, user.password);
-                if(f){
-                    const token = jwt.sign({email: user.email},process.env.jwtSecret,{expiresIn: '1d'});
-                    res.json({message: "Login Successful!",
-                              token  });
-                }
-                else {
-                    res.send("Email and Password Did not Match!");
-                }
+            else {
+                res.status(401).send({message: "Email and Password Did not Match!"});
             }
 
         } catch(err){
-            res.send("Oops! Error: "+err);
+            res.status(400).send({message: err});
         }
-    },
-    getUsers: async(req, res, next) => {
-        try{
-            const users = await userService.getAllUser();
-            res.json(users); 
-        } catch(err){
-            res.send("Oops! Error: "+err);
-        }
-        
     }
 
 }  

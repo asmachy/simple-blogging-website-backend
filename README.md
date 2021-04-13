@@ -13,11 +13,11 @@ To Run:
 
     npm start
 # URI
-To register:  POST http://localhost:3000/register 
+To register:  POST http://localhost:3000/user/register 
 
   Request Body: {"fullname":"", "email":"", "password":""}
 
-To login: POST http://localhost:3000/login
+To login: POST http://localhost:3000/user/login
 
   Request Body: {"email":"", "password":""}
 

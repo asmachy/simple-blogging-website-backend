@@ -4,7 +4,7 @@ class PostService{
       async createNewUser(reqBody){
         try{
             const hashedpassword = await bcryptjs.hash(reqBody.password, 10)
-        const user = new User({
+            const user = new User({
             fullname: reqBody.fullname,
             email: reqBody.email,
             password: hashedpassword
