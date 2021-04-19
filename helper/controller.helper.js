@@ -1,42 +1,4 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const PostService = require("../services/post.service");
-const postService = new PostService();
-const UserService = require("../services/user.service");
-const userService = new UserService();
-async function tokenValidation(token){
-    try{
-        const verified = jwt.verify(token,process.env.jwtSecret);
-        let user = verified;
-        user = await userService.getUserByEmail(user.email);
-        return user;
-    } catch(err){
-        return {message: err};
-    }
-}
-
-async function authentication (bearerToken){
-    try{ 
-        const token = await bearerToken.substring(7, bearerToken.length);
-        const user = await tokenValidation(token);
-        return user;
-        
-    } catch(err){
-        return {message: err};
-    }
-    
-}
-
-async function isValidUser(post, author_email ){
-    try{
-        if(post.author_email!=author_email) return false;
-        else return true;
-    } catch(err){
-        return {message: err};
-    }
-    
-}
-
 
 async function updatePostContent(reqBody,post){
     try{
@@ -51,7 +13,6 @@ async function updatePostContent(reqBody,post){
 
 async function convertProperties(post, seperation,seperationEnd, newLine){
     try{
-        
         let postProperties=seperation+post.title+newLine+seperationEnd;
         postProperties+=seperation+post.body+newLine+seperationEnd;
         postProperties+=seperation+"Author: "+post.author+newLine+seperationEnd;
@@ -102,14 +63,12 @@ async function convertPostsToDesiredType(content_type, dataArray){
         else
             return dataArray;
     }catch(err){
-        return {message: err};
+        console.log(err);
+        return err;
     }
     
 }
 module.exports = {
-    tokenValidation,
-    authentication,
-    isValidUser,
     convertPostsToDesiredType,
     updatePostContent
 }

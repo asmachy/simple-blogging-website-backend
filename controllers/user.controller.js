@@ -9,11 +9,11 @@ module.exports = {
         try{
             const user = await userService.getUserByEmail(req.body.email);
             if(user){
-                res.send("Email Already Exists.. Please Login.");
+                return res.send("Email Already Exists.. Please Login.");
             }
             else{
-                const nUser = await userService.createNewUser(req.body);
-                res.status(201).json(nUser);
+                const msg = await userService.createNewUser(req.body);
+                return res.status(201).send({message: msg});
             }
             
         } catch(err){
@@ -23,18 +23,19 @@ module.exports = {
     login: async(req, res, next) =>{
         try{
             const user = await userService.getUserByEmail(req.body.email);    
-            const f= await bcryptjs.compare(req.body.password, user.password);
+            let f=false;
+            if(user!=null) f= await bcryptjs.compare(req.body.password, user.password);
             if(f){
                 const token = jwt.sign({email: user.email},process.env.jwtSecret,{expiresIn: '1d'});
-                res.status(200).json({message: "Login Successful!",
+                return res.status(200).json({message: "Login Successful!",
                           token  });
             }
             else {
-                res.status(401).send({message: "Email and Password Did not Match!"});
+                return res.status(401).send({message: "Incorrect email or password"});
             }
 
         } catch(err){
-            res.status(400).send({message: err});
+            return res.status(400).send({message: err});
         }
     }
 

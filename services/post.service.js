@@ -6,6 +6,7 @@ class PostService{
             const posts = await Post.find();
             return posts;
         } catch(err){
+            console.log(err);
             return null;
         }
     }
@@ -19,37 +20,44 @@ class PostService{
         }
     }
     async createNewPost(reqBody, author_name, author_email){
-        const post = new Post({
-            title: reqBody.title,
-            body: reqBody.body,
-            author: author_name,
-            author_email: author_email
-        });
         try{
+            const post = new Post({
+                title: reqBody.title,
+                body: reqBody.body,
+                author: author_name,
+            author_email: author_email
+            });
             const post1= await post.save();
-            return post1;
+            return "Post Created";
         } catch(err){
-            return null;
+            console.log(err);
+            return err.message;
     
         }
     }
     async updatePostById(id, post){
         try{
-             await Post.findByIdAndUpdate(id, post);
-             return true;
+             await Post.findByIdAndUpdate(id, post,{
+                useFindAndModify: false
+             });
+             return "Post Updated";
 
         } catch(err){
-            return null;
+            console.log(err);
+            return "Error in Server";
     
         }
     }
     async deletePostById(id){
         try{
 
-            await Post.findByIdAndDelete(id);
+            await Post.findByIdAndDelete(id,{
+                useFindAndModify: false
+             });
             return "Post Deleted";
         } catch(err){
-            return null;
+            console.log(err);
+            return "Error in Server";
     
         }
     }

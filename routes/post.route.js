@@ -1,13 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const postController = require("../controllers/post.controller");
+const queryUserHelper = require("../helper/query.user.helper");
+const queryPostHelper = require("../helper/query.post.helper");
 
 router.get('/', postController.getPosts);
-router.post('/',postController.createPost);
+router.post('/',[queryPostHelper.isValidNewPostInfo, queryUserHelper.isLoggedIn],postController.createPost);
 
-router.get('/:id',postController.getPost);
-router.put('/:id',postController.updatePost);
-router.delete('/:id',postController.deletePost);
+router.get('/:id',[queryPostHelper.isValidPostId],postController.getPost);
+router.put('/:id',[queryPostHelper.isValidPostId, queryUserHelper.isLoggedIn,
+    queryPostHelper.isValidAuthor],postController.updatePost);
+router.delete('/:id',[queryPostHelper.isValidPostId, queryUserHelper.isLoggedIn,
+    queryPostHelper.isValidAuthor],postController.deletePost);
 
 
 module.exports = router;

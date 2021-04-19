@@ -3,16 +3,18 @@ const bcryptjs = require("bcryptjs");
 class PostService{
       async createNewUser(reqBody){
         try{
-            const hashedpassword = await bcryptjs.hash(reqBody.password, 10)
+            let hashedpassword="";
+            if(reqBody.password!="")
+            hashedpassword = await bcryptjs.hash(reqBody.password, 10);
             const user = new User({
             fullname: reqBody.fullname,
             email: reqBody.email,
             password: hashedpassword
         });
             const user1= await user.save();
-            return user1;
+            return "Registration Successfull";
         } catch(err){
-            return {"message": "Oops! Something Happend!"};
+            return err.message;
     
         }
       }
@@ -21,7 +23,7 @@ class PostService{
             const users = await User.find();
             return users;
         } catch(err){
-            return {"message": "Oops! Something Happend!"};
+            return err.message;
         }
       }
       async getUserByEmail(email){
@@ -29,7 +31,7 @@ class PostService{
             const user = await User.findOne({email:email});
             return user;
         } catch(err){
-            return {"message": "Oops! Something Happend!"};
+            return err.message;
         }
       }
 }
