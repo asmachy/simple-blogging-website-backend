@@ -38,6 +38,7 @@ module.exports = {
         } catch(err){
             console.log(err);
             res.status(400).send({message: err.message});
+            return;
         }
     },
     updatePost: async(post, req, res, next) => {
