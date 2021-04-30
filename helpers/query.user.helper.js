@@ -1,47 +1,47 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const PostService = require("../services/post.service");
-const postService = new PostService();
-const UserService = require("../services/user.service");
-const userService = new UserService();
-const mongoose = require('mongoose');
-const { collection } = require('../models/post.model');
-
-async function tokenValidation(token, res){
+const userService = require("../services/user.service");
+async function tokenValidation(token){
     try{
-        // let user= null;
-        let user = jwt.verify(token,process.env.jwtSecret);
-        user = await userService.getUserByEmail(user.email);
-        if(!user){
-            res.status(401);
-            return res.send({message: "Please login and use correct token"});
-        }
+        let userInfo = jwt.verify(token,process.env.jwtSecret);
+        let user = await userService.getUserByEmail(userInfo.email);
+        
         return user;
+
     } catch(err){
-        res.status(401);
-        return res.send({message: "Please login and use correct token"});
-        // return null;
+        return 'not verified token';
     }
+    
 }
 
 async function isLoggedIn (req,res,next){
     try{
         let token = req.header('authorization');
         token = await token.substring(7, token.length);
-        const user = await tokenValidation(token, res);
-        if(!user) return;
-        return next(user);
+        const user = await this.tokenValidation(token);
+
+        if(!user) {
+            res.status(410);
+            return res.send({message: 'User does not exist anymore. Please register.'})
+        }
+        else if(user=='not verified token'){
+            res.status(401);
+            return res.send({message: 'Please login and use correct token'});
+        }
+        else return next(user);
         
     } catch(err){
         res.status(401);
-        return res.send({message: "Please login and use correct token"});
+        return res.send({message: 'Please login and use correct token'});
     }
     
 }
 
-async function isValidUserInfo(req,res,next ){
+async function isValidLoginFormat(req,res,next ){
     try{
+        
         if(req.body.email==null || req.body.password==null || Object.keys(req.body).length!=2) {
+            
             res.status(400);
             return res.send({message: "Incorrect login format",
                         correctFormat: {
@@ -49,15 +49,19 @@ async function isValidUserInfo(req,res,next ){
                         password: ""
             }});
         }
-        else next();
+        else {
+            next();
+            return;
+        }
     } catch(err){
         return res.status(400).send(err);
     }
     
 }
 
-async function isValidNewUserInfo(req,res,next ){
+async function isValidRegistrationFormat(req,res,next ){
     try{
+
         if(req.body.email==null || req.body.password==null ||req.body.fullname==null || Object.keys(req.body).length!=3){
             res.status(400);
             return res.send({message: "Incorrect register format",
@@ -67,7 +71,7 @@ async function isValidNewUserInfo(req,res,next ){
                     password: ""
             }});
         }
-        else next();
+        else return next();
     } catch(err){
         res.status(400);
         return res.send(err.message);
@@ -75,10 +79,9 @@ async function isValidNewUserInfo(req,res,next ){
     
 }
 
-
 module.exports = {
     tokenValidation,
     isLoggedIn,
-    isValidUserInfo,
-    isValidNewUserInfo
+    isValidLoginFormat,
+    isValidRegistrationFormat
 }

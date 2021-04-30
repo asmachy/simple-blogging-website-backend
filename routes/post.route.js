@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const postController = require("../controllers/post.controller");
-const queryUserHelper = require("../helper/query.user.helper");
-const queryPostHelper = require("../helper/query.post.helper");
+const queryUserHelper = require("../helpers/query.user.helper");
+const queryPostHelper = require("../helpers/query.post.helper");
 
 router.get('/', postController.getPosts);
-router.post('/',[queryPostHelper.isValidNewPostInfo, queryUserHelper.isLoggedIn],postController.createPost);
+router.post('/',[queryPostHelper.isValidNewPostFormat, queryUserHelper.isLoggedIn],postController.createPost);
 
 router.get('/:id',[queryPostHelper.isValidPostId],postController.getPost);
 router.put('/:id',[queryPostHelper.isValidPostId, queryUserHelper.isLoggedIn,

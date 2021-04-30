@@ -1,8 +1,8 @@
 const express = require('express');
-const UserService = require("../services/user.service");
-const userService = new UserService();
+const userService =  require("../services/user.service");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Cookie } = require('express-session');
 module.exports = {
     
     createUser: async(req, res, next) => {
@@ -27,6 +27,8 @@ module.exports = {
             if(user!=null) f= await bcryptjs.compare(req.body.password, user.password);
             if(f){
                 const token = jwt.sign({email: user.email},process.env.jwtSecret,{expiresIn: '1d'});
+                // res.cookie('Authentication-token') = token;
+                // console.log(res);
                 return res.status(200).json({message: "Login Successful!",
                           token  });
             }
@@ -35,8 +37,7 @@ module.exports = {
             }
 
         } catch(err){
-            return res.status(400).send({message: err});
+            return res.status(400).send({message: err.message});
         }
     }
-
 }  

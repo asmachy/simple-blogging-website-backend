@@ -1,64 +1,77 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const PostService = require("../services/post.service");
-const postService = new PostService();
-const UserService = require("../services/user.service");
-const userService = new UserService();
+const postService = require("../services/post.service");
 const mongoose = require('mongoose');
-const controllerHelper = require('../helper/controller.helper');
+const controllerHelper = require('../helpers/controller.helper');
 module.exports = {
     getPost: async(req,res,next) =>{
         try{
-            await mongoose.Types.ObjectId.isValid(req.params.id);
             const post = await postService.getPostById(req.params.id);
-            if(post==null){
-                res.status(404).send({message: "Post Not Found"});    
+            if(post.data==null){
+                res.status(410);
+                return res.send('Post not Found');    
             }
-            let resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), [post]);
-            return res.status(200).send(resBody);
+            let resBody = post.data;
+            if(post.status!=500)
+            resBody= await controllerHelper.convertPostsToDesiredType(req.header('Accept'), [post.data]);
+            res.status(post.status);
+            return res.send(resBody);
         } catch(err){
-            res.status(400).send(err);
+            res.status(400);
+            return res.send(err.message);
         }
     },
     getPosts: async(req, res, next) => {
         try{
             const posts = await postService.getAllPost();
-            let resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), posts);
-            return res.status(200).send(resBody);
+            let resBody = posts.data;
+            if(posts.status!= 500)
+            resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), posts.data);
+
+            res.status(posts.status);
+            return res.send(resBody);
         } catch(err){
             console.log(err);
-            res.status(400).send({message: err});
+            res.status(400);
+            return res.send(err.message);
         }    
     },
     createPost: async(user,req,res,next) => {
         try{
+            console.log(req.body);
             const msg = await postService.createNewPost(req.body, user.fullname, user.email);
-            console.log(msg);
-            return res.status(201).send({message: msg});
+            res.status(msg.status);
+            return res.send(msg.data);
         } catch(err){
             console.log(err);
-            res.status(400).send({message: err.message});
-            return;
+            res.status(400);
+            return res.send(err.message);
+            
         }
     },
     updatePost: async(post, req, res, next) => {
         try{
             post = await controllerHelper.updatePostContent(req.body, post);
             const msg = await postService.updatePostById(req.params.id, post);
-            let resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), [post]);
-            return res.status(201).send({message: msg, resBody});
+            let resBody = '';
+            if(msg.status!=500)
+            resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), [post]);
+            res.status(msg.status);
+            return res.send({message: msg.data, resBody});
         } catch(err){
             console.log(err);
-            return res.status(400).send({message: err});
+            res.status(400);
+            return res.send(err.message);
         }
     },
     deletePost: async(post,req, res, next) => {
         try{
             const msg = await postService.deletePostById(req.params.id);
-            return res.status(200).send({message: msg});
+            res.status(msg.status);
+            return res.send(msg.data);
         } catch(err){
-            console.log(err);
-            return res.status(400).send({message: err});
+            res.status(400);
+            return res.send(err.message);
         }
     }   
 }
