@@ -8,36 +8,49 @@ module.exports = {
     createUser: async(req, res, next) => {
         try{
             const user = await userService.getUserByEmail(req.body.email);
-            if(user){
-                return res.send("Email Already Exists.. Please Login.");
+            if(user.data!= null && user.status!=500){
+                res.status(409);
+                return res.send('Email Already Exists.. Please Login.');
+            }
+            else if(user.status==500){
+                res.status(user.status);
+                return res.send(user.data);
             }
             else{
                 const msg = await userService.createNewUser(req.body);
-                return res.status(201).send({message: msg});
+                res.status(msg.status);
+                return res.send(msg.data);
             }
             
         } catch(err){
-            res.status(400).send({message: err});
+            res.status(400);
+            return res.send(err.message);
         }
     },
     login: async(req, res, next) =>{
         try{
             const user = await userService.getUserByEmail(req.body.email);    
             let f=false;
-            if(user!=null) f= await bcryptjs.compare(req.body.password, user.password);
+            if(user.status==500){
+                res.status(user.status);
+                return res.send(user.data);
+            }
+            
+            if(user.data!=null) f= await bcryptjs.compare(req.body.password, user.data.password);
             if(f){
-                const token = jwt.sign({email: user.email},process.env.jwtSecret,{expiresIn: '1d'});
-                // res.cookie('Authentication-token') = token;
-                // console.log(res);
-                return res.status(200).json({message: "Login Successful!",
-                          token  });
+                const token = jwt.sign({email: user.data.email},process.env.jwtSecret,{expiresIn: '1d'});    
+                res.status(200)
+                return res.json({message: "Login Successful!",
+                token: token});
             }
             else {
-                return res.status(401).send({message: "Incorrect email or password"});
+                res.status(401)
+                return res.send('Incorrect email or password');
             }
 
         } catch(err){
-            return res.status(400).send({message: err.message});
+            res.status(400);
+            return res.send(err.message);
         }
     }
 }  

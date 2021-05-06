@@ -31,19 +31,16 @@ module.exports = {
             res.status(posts.status);
             return res.send(resBody);
         } catch(err){
-            console.log(err);
             res.status(400);
             return res.send(err.message);
         }    
     },
     createPost: async(user,req,res,next) => {
         try{
-            console.log(req.body);
             const msg = await postService.createNewPost(req.body, user.fullname, user.email);
             res.status(msg.status);
             return res.send(msg.data);
         } catch(err){
-            console.log(err);
             res.status(400);
             return res.send(err.message);
             
@@ -59,7 +56,6 @@ module.exports = {
             res.status(msg.status);
             return res.send({message: msg.data, resBody});
         } catch(err){
-            console.log(err);
             res.status(400);
             return res.send(err.message);
         }

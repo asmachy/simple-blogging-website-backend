@@ -5,20 +5,18 @@ async function updatePostContent(reqBody,post){
         if(reqBody.body!=null)  post.body = reqBody.body;
         return post;
     } catch(err){
-        return {message: err.message};
-    }
-    
+        return err.message;
+    }  
 }
 
 async function convertProperties(post, seperation,seperationEnd, newLine){
     try{
-        console.log('ashche');
         let postProperties=seperation+post.title+newLine+seperationEnd;
         postProperties+=seperation+post.body+newLine+seperationEnd;
         postProperties+=seperation+"Author: "+post.author+newLine+seperationEnd;
         return postProperties;
     } catch(err){
-        return {message: err};
+        return err.message;
     }
     
 }
@@ -34,7 +32,7 @@ async function generateHtmlBody(dataArray){
          htmlBody+= "</div>";
         return htmlBody;
     }catch(err){
-        return {message: err.message};
+        return err.message;
     }
     
     
@@ -49,7 +47,7 @@ async function generatePlainTextBody(dataArray){
         }
       return textBody;
     }catch(err){
-        return {message: err.message};
+        return err.message;
     }
     
 }
@@ -57,7 +55,6 @@ async function generatePlainTextBody(dataArray){
 async function convertPostsToDesiredType(content_type, dataArray){
     try{
         if(content_type.toLowerCase().includes("html")){
-            // console.log(this.generateHtmlBody(dataArray));
             return this.generateHtmlBody(dataArray);
         }
         else if(content_type.toLowerCase().includes("text/plain")){
@@ -66,8 +63,7 @@ async function convertPostsToDesiredType(content_type, dataArray){
         else
             return dataArray;
     }catch(err){
-        console.log(err);
-        return err;
+        return err.message;
     }
     
 }

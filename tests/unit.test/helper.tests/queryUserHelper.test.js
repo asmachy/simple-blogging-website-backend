@@ -11,8 +11,8 @@ const expect = chai.expect;
 
 
 describe('Query user helper Unit Tests: ',() =>{
-    describe('token validation', () =>{
-        let expectedValue, stub, returnedValue, user, userInfo;
+    describe('Token Validation', () =>{
+        let expectedValue, returnedValue, user, userInfo;
         beforeEach(()=> {
             sandbox.restore();
         });
@@ -30,12 +30,11 @@ describe('Query user helper Unit Tests: ',() =>{
             sandbox.stub(jwt, 'verify')
             .returns(userInfo);
             
-            stub = sandbox.stub(userService, 'getUserByEmail');
-            stub.returns(Promise.resolve(user));
+            sandbox.stub(userService, 'getUserByEmail')
+            .returns({data: user, status: 200});
             expectedValue = user;
             
             returnedValue =  await queryUserHelper.tokenValidation("valid token");
-
             expect(returnedValue).to.be.equal(expectedValue);
         });
 
@@ -43,8 +42,8 @@ describe('Query user helper Unit Tests: ',() =>{
             userInfo = {email: 'asma@cefalo.com'};
             sandbox.stub(jwt, 'verify')
             .returns(userInfo);
-            stub = sandbox.stub(userService, 'getUserByEmail');
-            stub.returns(Promise.resolve(null));
+            sandbox.stub(userService, 'getUserByEmail')
+            .returns({data: null, status: 200});
             
             expectedValue  = null;
             returnedValue = await queryUserHelper.tokenValidation("deleted user token");
@@ -67,12 +66,13 @@ describe('Query user helper Unit Tests: ',() =>{
         });
         
     });
-    describe('is logged in', () =>{
+    describe('Is Logged In', () =>{
         //TODO: stubbing substring method
 
-        let req, res, stub, next = sandbox.spy();
+        let req, res, next;
         beforeEach( ()=> {
             sandbox.restore();
+            next = sandbox.spy()
         });
 
         it('should return 401 for blank or invalid authorization header', async()=>{
@@ -83,15 +83,14 @@ describe('Query user helper Unit Tests: ',() =>{
                 status: sandbox.spy(),
                 send: sandbox.spy()
             };
-            stub = sandbox.stub(queryUserHelper, 'tokenValidation');
-            stub.returns(Promise.resolve('not verified token'));
+            sandbox.stub(queryUserHelper, 'tokenValidation')
+            .returns('not verified token');
             let returnedValue = await queryUserHelper.tokenValidation("");
-            console.log(returnedValue);
-
+        
             returnedValue = await queryUserHelper.isLoggedIn(req,res,next);
-            console.log(res);
-            res.status.calledWith(401).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
-            res.send.calledWith({message:'Please login and use correct token'}).should.equal(true);
+
+            res.status.calledWith(401).should.equal(true, `Status ${res.status.args[0][0]}`);
+            res.send.calledWith('Please login and use correct token').should.equal(true);
         });
 
         it('should return 410 for deleted user', async()=>{
@@ -102,10 +101,10 @@ describe('Query user helper Unit Tests: ',() =>{
                 status: sandbox.spy(),
                 send: sandbox.spy()
             };
-            sandbox.stub(queryUserHelper,'tokenValidation').returns(Promise.resolve(null));
+            sandbox.stub(queryUserHelper,'tokenValidation').returns(null);
             await queryUserHelper.isLoggedIn(req,res,next);
-            res.status.calledWith(410).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
-            res.send.calledWith({message: 'User does not exist anymore. Please register.'}).should.equal(true, `${res.send.args[0][0].message}`);
+            res.status.calledWith(410).should.equal(true, `Status ${res.status.args[0][0]}`);
+            res.send.calledWith('User does not exist anymore. Please register.').should.equal(true, `${res.send.args[0][0].message}`);
         });
 
         it('should call next for valid user', async()=>{
@@ -121,22 +120,57 @@ describe('Query user helper Unit Tests: ',() =>{
                 email: 'abc@gmail.com',
                 password: 'password'
             };
-            sandbox.stub(queryUserHelper,'tokenValidation').returns(Promise.resolve(user));
+            sandbox.stub(queryUserHelper,'tokenValidation').returns(user);
             await queryUserHelper.isLoggedIn(req,res,next);
             next.calledWith(user).should.equal(true);
         });
 
+        it('should return status 500 if server does not work', async()=>{
+            req = {
+                header: (headerName)=> { return 'valid header value';}
+            };
+            res = {
+                status: sandbox.spy(),
+                send: sandbox.spy()
+            };
+            
+            sandbox.stub(queryUserHelper,'tokenValidation').returns('server failed');
+            await queryUserHelper.isLoggedIn(req,res,next);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(500).should.equal(true, `Status ${res.status.args[0][0]}`);
+            res.send.calledWith('Server is not responding. Please try again later')
+            .should.equal(true, `${res.send.args[0][0].message}`);
+        });
+
+        it('should return status 400 for catch block', async()=>{
+            req = {
+                header: (headerName)=> { return 'valid header value';}
+            };
+            res = {
+                status: sandbox.spy(),
+                send: sandbox.spy()
+            };
+            
+            sandbox.stub(queryUserHelper,'tokenValidation').throws({message: 'error'});
+            await queryUserHelper.isLoggedIn(req,res,next);
+            res.status.calledWith(400).should.equal(true, `Status ${res.status.args[0][0]}`);
+            res.send.calledWith('error').should.equal(true, `${res.send.args[0][0]}`);
+            next.notCalled.should.equal(true);
+        });
+
         afterEach( ()=> {
             sandbox.restore();
+            next = sandbox.spy()
         });
     });
 
-    describe('is valid login format', () =>{
+    describe('Is Valid Login Format', () =>{
         // TODO: stubbing Object key length
 
-        let req, res, stub, next = sandbox.spy(), responseMessage;
+        let req, res, next, responseMessage;
         beforeEach( ()=> {
             sandbox.restore();
+            next = sandbox.spy()
         });
 
         it('should return 400 if email missing',async()=>{
@@ -157,7 +191,8 @@ describe('Query user helper Unit Tests: ',() =>{
             };
             
             await queryUserHelper.isValidLoginFormat(req,res,next);
-            res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(400).should.equal(true, `Status ${res.status.args[0][0]}`);
             res.send.calledWith(responseMessage).should.equal(true, `${res.send.args[0][0].message}`);
 
         });
@@ -180,7 +215,8 @@ describe('Query user helper Unit Tests: ',() =>{
             };
             
             await queryUserHelper.isValidLoginFormat(req,res,next);
-            res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(400).should.equal(true, `Status ${res.status.args[0][0]}`);
             res.send.calledWith(responseMessage).should.equal(true, `${res.send.args[0][0].message}`);
 
         });
@@ -205,7 +241,8 @@ describe('Query user helper Unit Tests: ',() =>{
             };
             
             await queryUserHelper.isValidLoginFormat(req,res,next);
-            res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(400).should.equal(true, `Status ${res.status.args[0][0]}`);
             res.send.calledWith(responseMessage).should.equal(true, `${res.send.args[0][0].message}`);
 
         });
@@ -223,21 +260,37 @@ describe('Query user helper Unit Tests: ',() =>{
             };
             
             await queryUserHelper.isValidLoginFormat(req,res,next);
-            // next.calledWith().should.equal(true);
-            next.calledOnce.should.equal(true);
+            next.calledOnceWith().should.equal(true);
             
 
         });
-        
+
+        it('should return error for catch block',async()=>{
+            req = {
+                body: undefined
+            };
+            res = {
+                status: sandbox.spy(),
+                send: sandbox.spy()
+            };
+            responseMessage = 'Cannot read property \'email\' of undefined';
+            await queryUserHelper.isValidLoginFormat(req,res,next);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(400).should.equal(true, `Status: ${res.status.args[0][0]}`);
+            res.send.calledWith(responseMessage).should.equal(true, `Message: ${res.send.args[0][0]}`);
+
+        });
         afterEach( ()=> {
             sandbox.restore();
+            next = sandbox.spy()
         });
     });
 
-    describe('is valid registration format', () =>{
-        let req, res, stub, next = sandbox.spy();
+    describe('Is Valid Registration Format', () =>{
+        let req, res, next;
         beforeEach( ()=> {
             sandbox.restore();
+            next = sandbox.spy()
         });
 
         it('should return 400 if any information is missing',async()=>{
@@ -258,8 +311,9 @@ describe('Query user helper Unit Tests: ',() =>{
                                     password: ""
             }};
             await queryUserHelper.isValidRegistrationFormat(req,res,next);
-            res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
-            res.send.calledWith(responseMessage).should.equal(true, `${res.send.args[0][0].message}`);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(400).should.equal(true, `Status: ${res.status.args[0][0]}`);
+            res.send.calledWith(responseMessage).should.equal(true, `Message: ${res.send.args[0][0]}`);
 
         });
 
@@ -276,12 +330,29 @@ describe('Query user helper Unit Tests: ',() =>{
                 send: sandbox.spy()
             };
             await queryUserHelper.isValidRegistrationFormat(req,res,next);
-            next.calledWith().should.equal(true);
+            next.calledOnceWith().should.equal(true);
+
+        });
+
+        it('should return error for catch block',async()=>{
+            req = {
+                body: undefined
+            };
+            res = {
+                status: sandbox.spy(),
+                send: sandbox.spy()
+            };
+            responseMessage = 'Cannot read property \'email\' of undefined';
+            await queryUserHelper.isValidRegistrationFormat(req,res,next);
+            next.notCalled.should.equal(true);
+            res.status.calledWith(400).should.equal(true, `Status: ${res.status.args[0][0]}`);
+            res.send.calledWith(responseMessage).should.equal(true, `Message:S ${res.send.args[0][0]}`);
 
         });
 
         afterEach( ()=> {
             sandbox.restore();
+            next = sandbox.spy()
         });
     });
 

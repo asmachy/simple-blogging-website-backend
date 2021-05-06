@@ -3,15 +3,14 @@ const chai = require('chai');
 const expect = chai.expect;
 const should = require('should');
 const jwt = require('jsonwebtoken');
-// const mongoose = require('mongoose');
 const sandbox = sinon.createSandbox();
 
 const postController = require('../../../controllers/post.controller');
 const postService = require('../../../services/post.service');
 const controllerHelper = require('../../../helpers/controller.helper');
-const { response } = require('express');
+
 describe('Post Controller Unit Tests: ',() =>{
-    let req, res, responseMessage, stub1, stub2, stub, post, posts, user, returnedValue;
+    let req, res, responseMessage, post, posts, user, returnedValue;
     describe('Get Post', () =>{
         beforeEach( ()=> {
             sandbox.restore();
@@ -19,9 +18,9 @@ describe('Post Controller Unit Tests: ',() =>{
         it('should return status code 410 for deleted post id', async ()=>{
             req = { params: { id: "deleted post Id" } };
             res = {status : sandbox.spy(), send: sandbox.spy()};
-            returnedValue = {data: null, status: 200}; 
-            stub1 = sandbox.stub(postService, 'getPostById')
-            stub1.returns(returnedValue);
+            post = {data: null, status: 200}; 
+            sandbox.stub(postService, 'getPostById')
+            .returns(post);
             await postController.getPost(req,res);
             
             res.status.calledWith(410).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -37,10 +36,10 @@ describe('Post Controller Unit Tests: ',() =>{
             res = {status : sandbox.spy(), send: sandbox.spy()};
             post = {title: 'valid post', body: 'valid post body'};
             returnedValue = {data: post, status: 200};
-            stub1= sandbox.stub(postService, 'getPostById');
-            stub1.returns(returnedValue);
-            stub2 = sandbox.stub(controllerHelper, 'convertPostsToDesiredType');
-            stub2.returns([post]);
+            sandbox.stub(postService, 'getPostById')
+            .returns(returnedValue);
+            sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
+            .returns([post]);
             responseMessage = [post];
             await postController.getPost(req,res);
             res.status.calledWith(200).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -54,8 +53,8 @@ describe('Post Controller Unit Tests: ',() =>{
                 };
             res = {status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {data: 'error in server', status: 500};
-            stub1= sandbox.stub(postService, 'getPostById');
-            stub1.returns(returnedValue);
+            sandbox.stub(postService, 'getPostById')
+            .returns(returnedValue);
             responseMessage = returnedValue;
             // stub2 = sandbox.stub(controllerHelper, 'convertPostsToDesiredType');
             // stub2.returns([post]);
@@ -72,10 +71,10 @@ describe('Post Controller Unit Tests: ',() =>{
             res = {status : sandbox.spy(), send: sandbox.spy()};
             post = {title: 'valid post', body: 'valid post body'};
             responseMessage = {data: post, status: 200};
-            stub1= sandbox.stub(postService, 'getPostById');
-            stub1.returns(responseMessage);
-            stub2 = sandbox.stub(controllerHelper, 'convertPostsToDesiredType');
-            stub2.throws({message: 'error'});
+            sandbox.stub(postService, 'getPostById')
+            .returns(responseMessage);
+            sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
+            .throws({message: 'error'});
             responseMessage = [post];
             await postController.getPost(req,res);
             res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -95,11 +94,11 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {data: posts, status: 200}
-            stub1 = sandbox.stub(postService, 'getAllPost')
-            stub1.returns(returnedValue);
+            sandbox.stub(postService, 'getAllPost')
+            .returns(returnedValue);
             returnedValue = '<div><div>post1<br></div><div>post2<br></div></div>'
-            stub2 = sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
-            stub2.returns(returnedValue);
+            sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
+            .returns(returnedValue);
 
             responseMessage = returnedValue;
             await postController.getPosts(req,res);
@@ -112,8 +111,8 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {data: 'error in server', status: 500}
-            stub1 = sandbox.stub(postService, 'getAllPost')
-            stub1.returns(returnedValue);
+            sandbox.stub(postService, 'getAllPost')
+            .returns(returnedValue);
 
             responseMessage = returnedValue;
             await postController.getPosts(req,res);
@@ -127,10 +126,10 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {data: 'ok', status: 200}
-            stub1 = sandbox.stub(postService, 'getAllPost')
-            stub1.returns(returnedValue);
-            stub2 = sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
-            stub2.throws({message: 'error'});
+            sandbox.stub(postService, 'getAllPost')
+            .returns(returnedValue);
+            sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
+            .throws({message: 'error'});
             await postController.getPosts(req,res);
             res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
             res.send.calledWith('error').should.equal(true, `${res.send.args[0][0]}`);
@@ -152,8 +151,8 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {data: 'Post Created', status: 201};
-            stub1 = sandbox.stub(postService, 'createNewPost')
-            stub1.returns(returnedValue);
+            sandbox.stub(postService, 'createNewPost')
+            .returns(returnedValue);
 
             responseMessage = returnedValue;
             await postController.createPost(user,req,res);
@@ -169,8 +168,8 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {data: 'Error in server', status: 500};
-            stub1 = sandbox.stub(postService, 'createNewPost')
-            stub1.returns(returnedValue);
+            sandbox.stub(postService, 'createNewPost')
+            .returns(returnedValue);
 
             responseMessage = returnedValue;
             await postController.createPost(user,req,res);
@@ -185,8 +184,8 @@ describe('Post Controller Unit Tests: ',() =>{
                 }
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
-            stub1 = sandbox.stub(postService, 'createNewPost')
-            stub1.throws({message: 'error'});
+            sandbox.stub(postService, 'createNewPost')
+            .throws({message: 'error'});
 
             await postController.createPost(user,req,res);
             res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -210,14 +209,14 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {title: 'new title', body:'old body', author: 'author'};
-            stub = sandbox.stub(controllerHelper,'updatePostContent');
-            stub.returns(returnedValue);
+            sandbox.stub(controllerHelper,'updatePostContent')
+            .returns(returnedValue);
             msg = {data: 'Post updated', status: 201}
-            stub1 = sandbox.stub(postService, 'updatePostById');
-            stub1.returns(msg);
+            sandbox.stub(postService, 'updatePostById')
+            .returns(msg);
             resBody = 'new title\nold body\nAuthor: author\n';
-            stub2 = sandbox.stub(controllerHelper, 'convertPostsToDesiredType');
-            stub2.returns(resBody);
+            sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
+            .returns(resBody);
 
             responseMessage = {message: msg.data, resBody};
             await postController.updatePost(post,req,res);
@@ -233,11 +232,11 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {title: 'new title', body:'old body', author: 'author'};
-            stub = sandbox.stub(controllerHelper,'updatePostContent');
-            stub.returns(returnedValue);
+            sandbox.stub(controllerHelper,'updatePostContent')
+            .returns(returnedValue);
             msg = {data: 'Error in server', status: 500}
-            stub1 = sandbox.stub(postService, 'updatePostById');
-            stub1.returns(msg);
+            sandbox.stub(postService, 'updatePostById')
+            .returns(msg);
             resBody='';
             await postController.updatePost(user,req,res);
             res.status.calledWith(msg.status).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -252,11 +251,11 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             returnedValue = {title: 'new title', body:'old body', author: 'author'};
-            stub = sandbox.stub(controllerHelper,'updatePostContent');
-            stub.returns(returnedValue);
+            sandbox.stub(controllerHelper,'updatePostContent')
+            .returns(returnedValue);
             msg = {data: 'Error in server', status: 500}
-            stub1 = sandbox.stub(postService, 'updatePostById');
-            stub1.throws({message: 'error'});
+            sandbox.stub(postService, 'updatePostById')
+            .throws({message: 'error'});
 
             await postController.updatePost(user,req,res);
             res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -277,8 +276,8 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             msg = {data: 'Post deleted', status: 200};
-            stub1 = sandbox.stub(postService, 'deletePostById')
-            stub1.returns(msg);
+            sandbox.stub(postService, 'deletePostById')
+            .returns(msg);
             await postController.deletePost(post,req,res);
             res.status.calledWith(200).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
             res.send.calledWith(msg.data).should.equal(true, `${res.send.args[0][0]}`);
@@ -290,8 +289,8 @@ describe('Post Controller Unit Tests: ',() =>{
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
             responseMessage = {data: 'Error in server', status: 500};
-            stub1 = sandbox.stub(postService, 'deletePostById')
-            stub1.returns(responseMessage);
+            sandbox.stub(postService, 'deletePostById')
+            .returns(responseMessage);
 
             await postController.deletePost(post,req,res);
             res.status.calledWith(500).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
@@ -303,8 +302,8 @@ describe('Post Controller Unit Tests: ',() =>{
                 params: {id: 'post id'}
             };
             res = { status : sandbox.spy(), send: sandbox.spy()};
-            stub1 = sandbox.stub(postService, 'deletePostById')
-            stub1.throws({message: 'error'});
+            sandbox.stub(postService, 'deletePostById')
+            .throws({message: 'error'});
 
             await postController.deletePost(user,req,res);
             res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);

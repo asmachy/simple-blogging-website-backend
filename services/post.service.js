@@ -23,7 +23,7 @@ async function createNewPost(reqBody, author_name, author_email){
             author: author_name,
             author_email: author_email
         });
-        const post1= await post.save();
+        await post.save();
         return {data: "Post Created", status: 201};
     } catch(err){
         return {data: err.message, status: 500};
@@ -55,5 +55,6 @@ module.exports = {
     getPostById,
     createNewPost,
     updatePostById,
-    deletePostById    
+    deletePostById,
+    Post   
 };

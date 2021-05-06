@@ -4,39 +4,35 @@ const bcryptjs = require("bcryptjs");
 async function createNewUser(reqBody){
     try{
         let hashedpassword="";
-        if(reqBody.password!="")
-            hashedpassword = await bcryptjs.hash(reqBody.password, 10);
+        hashedpassword = await bcryptjs.hash(reqBody.password, 10);
         const user = new User({
         fullname: reqBody.fullname,
         email: reqBody.email,
         password: hashedpassword
         });
-        const user1= await user.save();
-        return "Registration Successfull";
+        await user.save();
+        return {data: 'Registration Successfull', status: 201};
     } catch(err){
-        return err.message;
+        return {data: err.message, status: 500};
     }
 }
 async function getAllUser() {
     try{
         const users = await User.find();
-        return users;
+        return {data: users, status: 200};
     } catch(err){
-        return err.message;
+        return {data: err.message, status: 500};
     }
 }
 
 async function getUserByEmail(email){
     try{
-        console.log("email: ",email);
         const user = await User.findOne({email:email});
-        console.log("user from user service: ", user);
-        return user;
-        // return Promise.resolve(user);
+        return {data: user, status: 200};
+
     } catch(err){
-        console.log('err from user service: ', err.message);
-        return null;
-        // return Promise.reject(null);
+        return {data: err.message, status: 500};
+
     }
 }
 
