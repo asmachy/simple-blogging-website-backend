@@ -4,7 +4,8 @@ async function getAllPost() {
         const posts = await Post.find();
         return {data: posts, status: 200};
     } catch(err){
-        return {data: err.message, status: 500};
+        return {data: 'server failed', status: 500};
+        // return {data: err.message, status: 500};
     }
 }
 async function getPostById(id){
@@ -12,7 +13,8 @@ async function getPostById(id){
         const post = await Post.findById(id);
         return {data: post, status: 200};
     } catch(err){
-        return {data: err.message, status: 500};
+        return {data: 'server failed', status: 500};
+        // return {data: err.message, status: 500};
     }
 }
 async function createNewPost(reqBody, author_name, author_email){
@@ -26,7 +28,8 @@ async function createNewPost(reqBody, author_name, author_email){
         await post.save();
         return {data: "Post Created", status: 201};
     } catch(err){
-        return {data: err.message, status: 500};
+        return {data: 'server failed', status: 500};
+        // return {data: err.message, status: 500};
     }
 }
 async function updatePostById(id, post){
@@ -36,7 +39,8 @@ async function updatePostById(id, post){
         });
         return {data: "Post Updated", status: 201};
     } catch(err){
-        return {data: err.message, status: 500};
+        return {data: 'server failed', status: 500};
+        // return {data: err.message, status: 500};
     }
 }
 async function deletePostById(id){
@@ -46,7 +50,8 @@ async function deletePostById(id){
         });
         return {data: "Post Deleted", status: 200};
     } catch(err){
-        return {data: err.message, status: 500};
+        return {data: 'server failed', status: 500};
+        // return {data: err.message, status: 500};
     }
 }
 

@@ -218,7 +218,7 @@ describe('Post Controller Unit Tests: ',() =>{
             sandbox.stub(controllerHelper, 'convertPostsToDesiredType')
             .returns(resBody);
 
-            responseMessage = {message: msg.data, resBody};
+            responseMessage = {message: msg.data, post: resBody};
             await postController.updatePost(post,req,res);
             res.status.calledWith(msg.status).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
             res.send.calledWith(responseMessage).should.equal(true, `${res.send.args[0][0]}`);
@@ -240,7 +240,7 @@ describe('Post Controller Unit Tests: ',() =>{
             resBody='';
             await postController.updatePost(user,req,res);
             res.status.calledWith(msg.status).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
-            res.send.calledWith({message: msg.data, resBody}).should.equal(true, `${res.send.args[0][0]}`);
+            res.send.calledWith({message: msg.data, post: resBody}).should.equal(true, `${res.send.args[0][0]}`);
         });
 
         it('should return 400 for catch block', async ()=>{

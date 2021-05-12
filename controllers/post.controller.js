@@ -54,7 +54,7 @@ module.exports = {
             if(msg.status!=500)
             resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), [post]);
             res.status(msg.status);
-            return res.send({message: msg.data, resBody});
+            return res.send({message: msg.data, post: resBody});
         } catch(err){
             res.status(400);
             return res.send(err.message);

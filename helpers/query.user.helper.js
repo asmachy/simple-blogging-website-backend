@@ -30,7 +30,7 @@ async function isLoggedIn (req,res,next){
         else if(user.email!=null)return next(user);
         else {
             res.status(500);
-            return res.send('Server is not responding. Please try again later');
+            return res.send('server failed');
         }
         
     } catch(err){

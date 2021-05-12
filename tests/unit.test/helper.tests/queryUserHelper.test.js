@@ -138,8 +138,8 @@ describe('Query user helper Unit Tests: ',() =>{
             await queryUserHelper.isLoggedIn(req,res,next);
             next.notCalled.should.equal(true);
             res.status.calledWith(500).should.equal(true, `Status ${res.status.args[0][0]}`);
-            res.send.calledWith('Server is not responding. Please try again later')
-            .should.equal(true, `${res.send.args[0][0].message}`);
+            res.send.calledWith('server failed')
+            .should.equal(true, `${res.send.args[0][0]}`);
         });
 
         it('should return status 400 for catch block', async()=>{
