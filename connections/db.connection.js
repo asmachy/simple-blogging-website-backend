@@ -3,14 +3,16 @@ const mongoose = require('mongoose');
 db_connection = (db_link)=>{
     return mongoose.connect(
         db_link,
-        { useUnifiedTopology: true,
-          useNewUrlParser: true })
+        {  useNewUrlParser: true,
+            useFindAndModify: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true })
           .then(()=>{
                 const connection = mongoose.connection;
                 console.log("DB Connected!");
           })
-          .catch(()=>{
-              console.log('Check your internet connection');
+          .catch((err)=>{
+              console.log(err.message);
     });
 }
 module.exports = {

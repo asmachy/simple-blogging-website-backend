@@ -1,0 +1,19 @@
+version: '3'
+services:
+    simple-blogging-website-backend: 
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        container_name: simple-blogging-website-backend
+        links:
+            - mongodb
+
+    mongodb:
+        image: mongo
+        ports:
+            - "27017:27017"
+        container_name: mongodb
+        volumes:
+            - ./db/://c/Program Files/MongoDB/Server/4.4/data
