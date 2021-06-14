@@ -1,12 +1,16 @@
 const express = require('express');
 async function updatePostContent(reqBody,post){
-    try{
-        if(reqBody.title!=null)  post.title = reqBody.title;
-        if(reqBody.body!=null)  post.body = reqBody.body;
+        
+        if(reqBody.title) {
+            post.title = reqBody.title;
+        } 
+        else throw({message: "Title can not be empty!!"})
+        if(reqBody.body){
+            post.body = reqBody.body;
+        }  
+        else throw({message: "Body can not be empty!!"})
         return post;
-    } catch(err){
-        return err.message;
-    }  
+  
 }
 
 async function convertProperties(post, seperation,seperationEnd, newLine){
