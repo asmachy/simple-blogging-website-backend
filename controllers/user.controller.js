@@ -18,12 +18,14 @@ module.exports = {
             }
             else{
                 const msg = await userService.createNewUser(req.body);
+                console.log(msg);
                 res.status(msg.status);
                 return res.send(msg.data);
             }
             
         } catch(err){
             res.status(400);
+            console.log('from controller',err.message);
             return res.send(err.message);
         }
     },
@@ -41,6 +43,8 @@ module.exports = {
                 const token = jwt.sign({email: user.data.email},process.env.jwtSecret,{expiresIn: '1d'});    
                 res.status(200)
                 return res.json({message: "Login Successful!",
+                fullname: user.data.fullname,
+                email: user.data.email,
                 token: token});
             }
             else {

@@ -62,8 +62,9 @@ async function isValidLoginFormat(req,res,next ){
 
 async function isValidRegistrationFormat(req,res,next ){
     try{
-        if(req.body.email==null || req.body.password==null ||req.body.fullname==null || Object.keys(req.body).length!=3){
+        if(!req.body.email|| !req.body.password ||!req.body.fullname || Object.keys(req.body).length!=3){
             res.status(400);
+            
             return res.send({message: "Incorrect register format",
             correctFormat: {
                 fullname: "",
@@ -75,6 +76,7 @@ async function isValidRegistrationFormat(req,res,next ){
 
     }catch(err){
         res.status(400);
+        // console.log('from helper', err.message);
         return res.send(err.message);
     }
 

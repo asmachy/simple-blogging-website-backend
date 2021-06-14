@@ -33,7 +33,7 @@ describe('Post Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await postService.getAllPost();
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
 
         afterEach( ()=> {
@@ -58,7 +58,7 @@ describe('Post Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await postService.getPostById(id);
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
         afterEach( ()=> {
             sandbox.restore();
@@ -91,7 +91,7 @@ describe('Post Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await postService.createNewPost(reqBody, author_name, author_email);
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
 
         afterEach( ()=> {
@@ -122,7 +122,7 @@ describe('Post Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await postService.updatePostById(id,post);
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
 
         afterEach( ()=> {
@@ -152,7 +152,7 @@ describe('Post Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await postService.deletePostById(id);
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
 
         afterEach( ()=> {

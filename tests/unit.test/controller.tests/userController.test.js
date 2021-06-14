@@ -13,7 +13,7 @@ const controllerHelper = require('../../../helpers/controller.helper');
 
 describe('User Controller Unit test',()=>{
     let  req, res, user, responeMessage, err;
-    user = {name: 'name', password: 'password'};
+    user = {name: 'name', email:"email", password: 'password'};
     req ={body:{email: 'email', password: 'password'}};
     describe('Create User',()=>{
 
@@ -43,7 +43,7 @@ describe('User Controller Unit test',()=>{
             res.status.calledWith(500).should.equal(true, `status returned ${res.status.args[0][0]}`);
             res.send.calledWith(responeMessage).should.equal(true, `send returned ${res.send.args[0][0]}`);
         });
-        it('should return 201 status code after creating post successfully', async()=>{
+        it('should return 201 status code after creating user successfully', async()=>{
             res = {status: sandbox.spy(), send: sandbox.spy()};            
             responeMessage = {data: 'Registration Successfull', status: 201};
             sandbox.stub(userService, 'getUserByEmail')
@@ -133,7 +133,7 @@ describe('User Controller Unit test',()=>{
             req.body.password = 'password';
             let token = 'jwt token';
             res = {status: sandbox.spy(), json: sandbox.spy()};            
-            responeMessage = {message: "Login Successful!", token: token};
+            responeMessage = {message: "Login Successful!",fullname: user.name, email: user.emai, token: token};
             sandbox.stub(userService, 'getUserByEmail')
             .returns({data: user, status: 200});
             sandbox.stub(bcryptjs, 'compare')

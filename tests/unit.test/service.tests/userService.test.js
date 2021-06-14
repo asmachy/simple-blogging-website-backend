@@ -37,7 +37,7 @@ describe('User Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await userService.createNewUser(reqBody);
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
 
         afterEach( ()=> {
@@ -65,7 +65,7 @@ describe('User Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue = await userService.getAllUser();
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
 
         afterEach( ()=> {
@@ -92,7 +92,7 @@ describe('User Service Unit Tests: ',() =>{
             .throws(err);
             expectedValue = {data: err.message, status: 500};
             returnedValue=await userService.getUserByEmail();
-            expect(returnedValue).to.be.eql(expectedValue);
+            expect(returnedValue.status).to.be.eql(expectedValue.status);
         });
         afterEach( ()=> {
             sandbox.restore();

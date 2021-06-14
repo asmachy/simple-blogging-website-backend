@@ -11,10 +11,11 @@ async function createNewUser(reqBody){
         password: hashedpassword
         });
         await user.save();
-        return {data: 'Registration Successfull', status: 201};
+        return {data: 'Registration Successful!', status: 201};
     } catch(err){
-        return {data: 'server failed', status: 500};
-        // return {data: err.message, status: 500};
+        // console.log(err);
+        // return {data: 'server failed', status: 500};
+        return {data: err.message, status: 500};
     }
 }
 async function getAllUser() {
@@ -22,8 +23,8 @@ async function getAllUser() {
         const users = await User.find();
         return {data: users, status: 200};
     } catch(err){
-        return {data: 'server failed', status: 500};
-        // return {data: err.message, status: 500};
+        // return {data: 'server failed', status: 500};
+        return {data: err.message, status: 500};
     }
 }
 
@@ -33,8 +34,8 @@ async function getUserByEmail(email){
         return {data: user, status: 200};
 
     } catch(err){
-        return {data: 'server failed', status: 500};
-        // return {data: err.message, status: 500};
+        // return {data: 'server failed', status: 500};
+        return {data: err.message, status: 500};
     }
 }
 
