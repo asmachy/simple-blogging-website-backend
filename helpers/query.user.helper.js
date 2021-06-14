@@ -27,7 +27,9 @@ async function isLoggedIn (req,res,next){
             res.status(401);
             return res.send('Please login and use correct token');
         }
-        else if(user.email!=null)return next(user);
+        else if(user.email!=null){
+            return next(user);
+        }
         else {
             res.status(500);
             return res.send('server failed');
@@ -62,17 +64,37 @@ async function isValidLoginFormat(req,res,next ){
 
 async function isValidRegistrationFormat(req,res,next ){
     try{
-        if(!req.body.email|| !req.body.password ||!req.body.fullname || Object.keys(req.body).length!=3){
+        if(!req.body.fullname){
             res.status(400);
-            
-            return res.send({message: "Incorrect register format",
-            correctFormat: {
-                fullname: "",
-                email: "",
-                password: ""
-            }});
+            return res.send("Invalid name of user");
         }
-        else return next();
+
+        if(!req.body.email){
+            res.status(400);
+            return res.send("Invalid email address");
+        }
+
+        if(!req.body.password){
+            res.status(400);
+            return res.send("invalid type of password");
+        }
+
+        if(Object.keys(req.body).length!=3){
+            res.status(400);
+            return res.send("Suspicious value detected");
+        }
+        
+        // if(!req.body.email|| !req.body.password ||!req.body.fullname || Object.keys(req.body).length!=3){
+            
+            
+        //     return res.send({message: "Incorrect register format",
+        //     correctFormat: {
+        //         fullname: "",
+        //         email: "",
+        //         password: ""
+        //     }});
+        // }
+        return next();
 
     }catch(err){
         res.status(400);

@@ -13,8 +13,6 @@ async function createNewUser(reqBody){
         await user.save();
         return {data: 'Registration Successful!', status: 201};
     } catch(err){
-        // console.log(err);
-        // return {data: 'server failed', status: 500};
         return {data: err.message, status: 500};
     }
 }
@@ -34,7 +32,6 @@ async function getUserByEmail(email){
         return {data: user, status: 200};
 
     } catch(err){
-        // return {data: 'server failed', status: 500};
         return {data: err.message, status: 500};
     }
 }

@@ -12,7 +12,8 @@ dotenv.config();
 
 const PORT = process.env.PORT|5000;
 
-if(process.env.HOME==='./root'){
+
+if(process.env.HOME==='/root'){
     db_connection(process.env.DB_CONNECTION_DOCKER);
 }
 else db_connection(process.env.DB_CONNECTION);

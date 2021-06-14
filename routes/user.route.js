@@ -4,6 +4,7 @@ const queryUserHelper = require("../helpers/query.user.helper");
 const userController = require("../controllers/user.controller");
 
 router.post('/login', [queryUserHelper.isValidLoginFormat], userController.login);
+router.post('/login/token',[queryUserHelper.isLoggedIn], userController.loginByToken);
 router.post('/register',[queryUserHelper.isValidRegistrationFormat], userController.createUser);
 
 module.exports = router;

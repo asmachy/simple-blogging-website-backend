@@ -24,6 +24,7 @@ module.exports = {
     getPosts: async(req, res, next) => {
         try{
             const posts = await postService.getAllPost();
+            posts.data.sort(function(a, b){return b.createdAt - a.createdAt});
             let resBody = posts.data;
             if(posts.status!= 500)
             resBody = await controllerHelper.convertPostsToDesiredType(req.header('Accept'), posts.data);

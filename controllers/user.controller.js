@@ -18,14 +18,12 @@ module.exports = {
             }
             else{
                 const msg = await userService.createNewUser(req.body);
-                console.log(msg);
                 res.status(msg.status);
                 return res.send(msg.data);
             }
             
         } catch(err){
             res.status(400);
-            console.log('from controller',err.message);
             return res.send(err.message);
         }
     },
@@ -56,5 +54,11 @@ module.exports = {
             res.status(400);
             return res.send(err.message);
         }
+    },
+    loginByToken: async(user, req, res, next)=>{
+        res.status(200);
+        return res.send(user.email);
+        
     }
+
 }  
