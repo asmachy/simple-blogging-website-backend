@@ -42,6 +42,5 @@ To update any blog: PUT http://localhost:5000/posts/{post_id} , Use Token
 To delete any blog: DELETE http://localhost:5000/posts/{post_id} , Use Token
 
 ## Technology Used
-Express, MongoDB Atlas (Cloud)
-
+Express, MongoDB 
 
