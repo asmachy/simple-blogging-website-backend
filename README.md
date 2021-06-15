@@ -11,7 +11,7 @@ User can:
 
 To Run: 
 
-    ### `npm start`
+    `npm start`
 ## URI
 To register:  POST http://localhost:5000/user/register 
 
