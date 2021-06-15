@@ -1,5 +1,7 @@
 # simple-blogging-website-backend
 
+It is a backend project of a simple blogging website
+
 ## Project Function
 User can:
 1. See all blogs with author name
@@ -9,38 +11,98 @@ User can:
 5. Update own blogs
 6. Delete own blogs
 
-To Run: 
+## How to Run
+1. Clone this repository
+2. Install mongodb in your local machine and make sure that it is running on port 27017.
+3. Go to the repository from command prompt or power shell (windows) or from terminal (linux).
+4. Make your own ".env" file and include port and database link in that file.
+5. Run command: `npm install`
+6. Run command: `npm start`
 
-    `npm start`
-## URI
-To register:  POST http://localhost:5000/user/register 
+## Features
+To register: 
 
-  Request Body: {"fullname":"", "email":"", "password":""}
+    POST /user/register 
 
-To login: POST http://localhost:5000/user/login
+    {
 
-  Request Body: {"email":"", "password":""}
+    "fullname":"user name", 
 
-To validate login by token: POST http://localhost:5000/user/login/{token}
+    "email":"user_email", 
 
-To see all blogs: GET http://localhost:5000/posts
+    "password":"user_password"
 
-To see any particular blog: GET http://localhost:5000/posts/{post_id}
+    }
 
-To create new blog: POST http://localhost:5000/posts,  Use the token for authentication which is given with response when logged in
+To login: 
 
-   Request Body: {"title":"", "body":""}
+    POST /user/login
 
-To update any blog: PUT http://localhost:5000/posts/{post_id} , Use Token
+    {
 
-   Request Body: {"title":""} (if users want to update title)
+    "email":"valid_email",
+
+    "password":"valid_password"
+
+    }
+
+To validate login by token: 
+
+    POST /login/{valid_token}
+
+To see all blogs: 
+
+    GET /posts
+
+To see any particular blog: 
+    
+    GET /posts/{post_id}
+
+To create new blog: 
+
+    POST /posts
+
+    Authorization: {valid_token}
+
+    {
+
+    "title":"post title", 
+
+    "body":"post body"
+
+    }
+
+To update any blog: 
+  
+    PUT /posts/{post_id}
+
+    Authorization: {valid_token}
+
+    {
+
+    "title":"post_title"
+
+    } (if users want to update title)
+
+    {
+
+    "body":"post_body"
+
+    } (if users want to update body)
+
+    {
+
+    "title":"post_title",
+
+    "body":"post_body"
+
+    } (if users want to update both)
    
-   Request Body: {"body":""} (if users want to update body)
-   
-   Request Body: {"title":"", "body":""} (if users want to update both)
-   
-To delete any blog: DELETE http://localhost:5000/posts/{post_id} , Use Token
+To delete any blog: 
 
+    DELETE /posts/{post_id}
+
+    Authorization: {valid_token}`
+  
 ## Technology Used
 Express, MongoDB 
-
