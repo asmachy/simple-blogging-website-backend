@@ -48,7 +48,8 @@ To login:
 
 To validate login by token: 
 
-    POST /login/{valid_token}
+    POST /login/token
+    Authorization: {valid_token}
 
 To see all blogs: 
 
